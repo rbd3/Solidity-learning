@@ -19,11 +19,16 @@ contract FundMe {
         //ETH/USD adress from https://docs.chain.link/data-feeds/price-feeds/addresses
         //0x5f4eC3Df9cbd43714FE2740f5E3616155c5b8419
         founders.push(msg.sender);
-        adressToAmountFounded[msg.sender] = adressToAmountFounded[msg.sender] + msg.value;
+        //adressToAmountFounded[msg.sender] = adressToAmountFounded[msg.sender] + msg.value;
+        adressToAmountFounded[msg.sender] += msg.value; //optimization
     }
 
     function withdraw() public {
-
+        for(uint256 i = 0; i < founders.length; i++){
+            address founder = founders[i];
+            adressToAmountFounded[founder] = 0; //reset adress
+        }
+        founders = new address[](0); //reset array or just  delete founders; // More gas-efficient than creating a new array
     }
 
 }
