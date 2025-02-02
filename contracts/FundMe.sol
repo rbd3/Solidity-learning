@@ -4,6 +4,7 @@ pragma solidity 0.8.26;
 
 import {PriceConverter} from "./PriceConverter.sol";
 error NotOwner();
+error CallFailed();
 
 contract FundMe {
 
@@ -45,7 +46,16 @@ contract FundMe {
         //bool success = payable (msg.sender).send(address(this).balance);
         //require(success, "Send failed");
         (bool callSucced,) = payable (msg.sender).call{value: address(this).balance}("");
-        require(callSucced, "call failed");
+        //require(callSucced, "call failed");
+        if(!callSucced) { revert CallFailed();}
     }
 // https://chatgpt.com/share/678f4017-00c8-800a-a4ab-91942c081569
+
+    receive() external payable {
+        fund();
+     }
+
+     fallback() external payable {
+        fund();
+      }
 }
